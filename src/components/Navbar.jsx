@@ -1,4 +1,6 @@
 import React from "react";
+import Content from "./content";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -9,7 +11,7 @@ export default function Navbar() {
           <li className="hover:text-gray-900 cursor-pointer">Home</li>
           <li className="hover:text-gray-900 cursor-pointer">Products</li>
           <li className="hover:text-gray-900 cursor-pointer">About</li>
-          <li className="hover:text-gray-900 cursor-pointer">Contact</li>
+          <li className="hover:text-gray-900 cursor-pointer"  > Contact</li>
         </ul>
       </div>
     </nav>
