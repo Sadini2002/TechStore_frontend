@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import ProductCard from "./components/ProductCard";
 import Footer from "./components/Footer";
 import Content from "./components/content";
+import { BrowserRouter } from "react-router-dom";
 
 const products = [
   { name: "Gaming Laptop", price: 1500, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvXY6M0veE8wDKoaE40ps3TgOAQq4l9NRp2Q&s" },
@@ -18,6 +19,7 @@ const products = [
 
 export default function App() {
   return (
+    <BrowserRouter>
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
       <Hero />
@@ -27,7 +29,9 @@ export default function App() {
         ))}
         
       </section>
+
       <Footer />
     </div>
+    </BrowserRouter>
   );
 }
