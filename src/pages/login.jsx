@@ -28,7 +28,7 @@ const Login = () => {
       alert("Login successful!");
 
       // Go to home page
-      navigate("/products");
+      navigate("/admin");
     } catch (error) {
       console.error(error);
 
