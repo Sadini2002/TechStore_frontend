@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/login";
+import SignupPage from "./pages/signupPage";
 import AdminPage from "./pages/admin/AdminPage";
 
 const products = [
@@ -85,7 +86,8 @@ export default function App() {
 
         {/* Login Page */}
         <Route path="/login" element={<LoginPage />} />
-
+        {/* Signup Page */}
+        <Route path="/signup" element={<SignupPage />} />
         {/* Admin Page */}
         <Route path="/admin" element={<AdminPage />} />
 
