@@ -1,57 +1,85 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
+const Login = () => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/users/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      console.log(response.data);
+
+      // Save JWT token
+      localStorage.setItem("token", response.data.token);
+
+      alert("Login successful!");
+
+      // Go to home page
+      navigate("/products");
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Login failed. Please check your email and password."
+      );
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
-          Welcome Back
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-        <p className="text-center text-gray-500 mb-6">
-          Login to your account
-        </p>
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
 
-        <form className="space-y-4">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          Login
+        </h2>
+
+        <form onSubmit={handleLogin}>
+
           {/* Email */}
-          <div>
-            <label className="block mb-2 text-gray-700 font-medium">
+          <div className="mb-4">
+            <label className="block mb-2 font-medium">
               Email
             </label>
+
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Password */}
-          <div>
-            <label className="block mb-2 text-gray-700 font-medium">
+          <div className="mb-6">
+            <label className="block mb-2 font-medium">
               Password
             </label>
+
             <input
               type="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
-
-          {/* Remember Me */}
-          <div className="flex justify-between items-center">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" />
-              <span className="text-sm text-gray-600">
-                Remember Me
-              </span>
-            </label>
-
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              Forgot Password?
-            </a>
           </div>
 
           {/* Login Button */}
@@ -61,21 +89,13 @@ function LoginPage() {
           >
             Login
           </button>
+
         </form>
 
-        {/* Register Link */}
-        <p className="text-center text-gray-600 mt-6">
-          Don't have an account?{" "}
-          <a
-            href="/register"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Sign Up
-          </a>
-        </p>
       </div>
+
     </div>
   );
-}
+};
 
-export default LoginPage;
+export default Login;
