@@ -91,6 +91,7 @@ export default function App() {
         {/* Admin Page */}
         <Route path="/admin" element={<AdminPage />} />
 
+<Route path="/admin/products" element={<AdminProductPage />} />
       </Routes>
     </BrowserRouter>
   );
