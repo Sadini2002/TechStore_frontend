@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signupPage";
 import AdminPage from "./pages/admin/AdminPage";
+import AdminProductPage from "./pages/admin/AdminProductPage";
 
 const products = [
   {
