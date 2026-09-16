@@ -1,6 +1,6 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   FaUser,
   FaEnvelope,
@@ -13,7 +13,8 @@ export default function SignupPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -21,7 +22,9 @@ export default function SignupPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,23 +32,55 @@ export default function SignupPage() {
     });
   };
 
-  const handleSignup = (e) => {
+  // Handle signup
+  const handleSignup = async (e) => {
     e.preventDefault();
 
-    // Check passwords
+    // Check password
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    console.log("Name:", formData.name);
-    console.log("Email:", formData.email);
-    console.log("Password:", formData.password);
+    try {
+      setLoading(true);
 
-    // Temporary navigation
-    alert("Account created successfully!");
+      // Send data to backend
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        {
+          email: formData.email,
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          password: formData.password,
+        }
+      );
 
-    navigate("/login");
+      console.log("Signup response:", response.data);
+
+      alert("Account created successfully!");
+
+      // Go to login page
+      navigate("/login");
+
+    } catch (error) {
+      console.error("Signup error:", error);
+
+      if (error.response) {
+        alert(
+          error.response.data.message ||
+          "Registration failed!"
+        );
+      } else if (error.request) {
+        alert(
+          "Cannot connect to server. Make sure the backend is running."
+        );
+      } else {
+        alert("Something went wrong!");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,11 +108,11 @@ export default function SignupPage() {
         {/* Signup Form */}
         <form onSubmit={handleSignup}>
 
-          {/* Name */}
+          {/* First Name */}
           <div className="mb-5">
 
             <label className="block text-gray-700 font-medium mb-2">
-              Full Name
+              First Name
             </label>
 
             <div className="relative">
@@ -86,9 +121,33 @@ export default function SignupPage() {
 
               <input
                 type="text"
-                name="name"
-                placeholder="Enter your name"
-                value={formData.name}
+                name="firstname"
+                placeholder="Enter your first name"
+                value={formData.firstname}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-lg py-3 pl-11 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+
+            </div>
+          </div>
+
+          {/* Last Name */}
+          <div className="mb-5">
+
+            <label className="block text-gray-700 font-medium mb-2">
+              Last Name
+            </label>
+
+            <div className="relative">
+
+              <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+
+              <input
+                type="text"
+                name="lastname"
+                placeholder="Enter your last name"
+                value={formData.lastname}
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-lg py-3 pl-11 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -208,9 +267,10 @@ export default function SignupPage() {
           {/* Signup Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 disabled:bg-gray-400"
           >
-            Create Account
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
 
         </form>
