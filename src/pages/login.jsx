@@ -1,24 +1,78 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaUser, FaLock } from "react-icons/fa";
+import axios from "axios";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaUser,
+  FaLock,
+} from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Temporary login
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      setLoading(true);
 
-    // After successful login
-    navigate("/admin");
+      const response = await axios.post(
+        "http://localhost:3000/api/users/login",
+        {
+          email: email,
+          password: password,
+        }
+      );
+
+      console.log("Login response:", response.data);
+
+      // Get logged-in user
+      const token = response.data.token;
+      const role = response.data.role;
+
+       localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
+      // Store user information
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // If backend returns a token
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+
+      // Role-based navigation
+      if (user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/products");
+      }
+
+    } catch (error) {
+      console.error("Login error:", error);
+
+      if (error.response) {
+        alert(
+          error.response.data.message ||
+          "Invalid email or password"
+        );
+      } else if (error.request) {
+        alert(
+          "Cannot connect to the server. Please make sure the backend is running."
+        );
+      } else {
+        alert("Something went wrong!");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,6 +82,7 @@ export default function LoginPage() {
 
         {/* Logo / Title */}
         <div className="text-center mb-8">
+
           <h1 className="text-3xl font-bold text-blue-600">
             TechStore
           </h1>
@@ -39,6 +94,7 @@ export default function LoginPage() {
           <p className="text-gray-500 mt-2">
             Welcome back! Please login to your account.
           </p>
+
         </div>
 
         {/* Login Form */}
@@ -46,11 +102,13 @@ export default function LoginPage() {
 
           {/* Email */}
           <div className="mb-5">
+
             <label className="block text-gray-700 font-medium mb-2">
               Email Address
             </label>
 
             <div className="relative">
+
               <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
               <input
@@ -61,16 +119,19 @@ export default function LoginPage() {
                 required
                 className="w-full border border-gray-300 rounded-lg py-3 pl-11 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
+
             </div>
           </div>
 
           {/* Password */}
           <div className="mb-5">
+
             <label className="block text-gray-700 font-medium mb-2">
               Password
             </label>
 
             <div className="relative">
+
               <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
               <input
@@ -84,11 +145,14 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() =>
+                  setShowPassword(!showPassword)
+                }
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
+
             </div>
           </div>
 
@@ -96,11 +160,14 @@ export default function LoginPage() {
           <div className="flex items-center justify-between mb-6">
 
             <label className="flex items-center gap-2 text-sm text-gray-600">
+
               <input
                 type="checkbox"
                 className="w-4 h-4"
               />
+
               Remember me
+
             </label>
 
             <Link
@@ -115,9 +182,10 @@ export default function LoginPage() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 disabled:bg-gray-400"
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </button>
 
         </form>
@@ -140,16 +208,17 @@ export default function LoginPage() {
 
         {/* Back Home */}
         <div className="text-center mt-5">
+
           <Link
             to="/"
             className="text-sm text-gray-500 hover:text-blue-600"
           >
             ← Back to TechStore
           </Link>
+
         </div>
 
       </div>
     </div>
   );
 }
-
